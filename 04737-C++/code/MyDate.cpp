@@ -22,6 +22,10 @@ private:
     // 成员变量
     int year, month, day;
     static int count;
+
+    // 友元函数，全局和类友元函数
+    friend void getRandom();
+    friend void MyDate::setDate(MyDate);
 };
 
 // 初始化静态变量
@@ -54,6 +58,7 @@ MyDate::MyDate(int y, int m, int d)
     year = y;
     month = m;
     day = d;
+    // this->year = y;
 }
 
 // 有参构造改写
