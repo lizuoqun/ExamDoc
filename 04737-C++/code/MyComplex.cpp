@@ -24,6 +24,12 @@ public:
     // 重载赋值运算符
     MyComplex &operator=(const MyComplex &c);
     MyComplex &operator=(double);
+
+    // 友元，插入，os是out别名
+    friend ostream &operator<<(ostream &os, const MyComplex &c);
+
+    // 友元，提取，is是cin是别名
+    friend istream &operator>>(istream &is, MyComplex &c);
 };
 
 MyComplex::MyComplex()
@@ -66,6 +72,38 @@ MyComplex &MyComplex::operator=(double d)
     real = d;
     imag = 0;
     return *this;
+}
+
+ostream &operator<<(ostream &os, const MyComplex &c)
+{
+    if (c.imag >= 0)
+        os << c.real << "+" << c.imag << "i"; // 以 a+bi 的形式输出
+    else
+        os << c.real << "-" << (-c.imag) << "i"; // 以 a-bi 的形式输出
+    return os;
+}
+
+istream &operator>>(istream &is, MyComplex &c)
+{
+    string s;
+    is >> s; // 将a+bi作为字符串读入，a+bi中间不能有空格
+
+    // 查找虚部
+    int pos = s.find("+", 0);
+    if (pos == -1)
+        // 虚部为负数时
+        pos = s.find("-", 1);
+
+    // 从0到+或-符号之间的字符取出，即分离出代表实部的字符串
+    string sReal = s.substr(0, pos);
+
+    // c_str()函数返回一个指向字符串的指针
+    // atof()能将参数内容转换成浮点数
+    c.real = atof(sReal.c_str());
+
+    sReal = s.substr(pos, s.length() - pos - 1); // 分离出代表虚部的字符串
+    c.imag = atof(sReal.c_str());
+    return is;
 }
 
 int main()
