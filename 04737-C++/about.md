@@ -3,4 +3,20 @@
 运行步骤：
 
 - ctrl+shift+p （查看->命令面板）
-- c/c++：运行c/c++文件
+- c/c++：运行 c/c++文件
+
+cpp 文件说明
+|文件名|说明|
+|--|--|
+|AddAndReduce.cpp|自增、自减运算符重载|
+|base.cpp|继承&派生 基类|
+|cin.cpp|输入|
+|defaultFn.cpp|函数参数默认值|
+|hello.cpp|hello world|
+|MyComplex.cpp|运算符重载|
+|MyDate.cpp|自定义类、构造、静态、常量、友元函数|
+|Point.cpp|内联函数|
+|typeCase.cpp|数据类型转换|
+|virtualFn.cpp|虚函数|
+
+
