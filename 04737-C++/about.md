@@ -16,6 +16,7 @@ cpp 文件说明
 |MyComplex.cpp|运算符重载|
 |MyDate.cpp|自定义类、构造、静态、常量、友元函数|
 |Point.cpp|内联函数|
+|StandardOutput.cpp|标准流输入输出|
 |typeCase.cpp|数据类型转换|
 |virtualFn.cpp|虚函数|
 
