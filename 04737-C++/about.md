@@ -11,6 +11,8 @@ cpp 文件说明
 |AddAndReduce.cpp|自增、自减运算符重载|
 |base.cpp|继承&派生 基类|
 |cin.cpp|输入|
+|cinFn.cpp|调用输入成员函数|
+|coutFn.cpp|调用输出成员函数|
 |defaultFn.cpp|函数参数默认值|
 |hello.cpp|hello world|
 |MyComplex.cpp|运算符重载|
@@ -19,5 +21,3 @@ cpp 文件说明
 |StandardOutput.cpp|标准流输入输出|
 |typeCase.cpp|数据类型转换|
 |virtualFn.cpp|虚函数|
-
-
