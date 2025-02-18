@@ -857,6 +857,7 @@ int main()
 ```
 
 ## 输入输出流
+### 流类对象
 ![](https://cdn.nlark.com/yuque/0/2025/png/42913202/1739518811477-510a02d6-3ffd-43b1-aee9-89cde9d97167.png)
 
 ```plain
@@ -881,7 +882,697 @@ C---->G(ofstream)
 | | fstream | 文件输入输出流类，既能从文件中读取数据，也能向文件中写入数据 | fstream |
 
 
+### 标准流对象
+iostream 中定义了 4 个标准流对象：
+
++ cin（标准输入流）：用于从键盘输入数据，是流类 istream 的对象
++ cout（标准输出流）：用于向屏幕输出数据，是流类 ostream 的对象，可以重定向输出到文件
++ cerr（非缓冲错误输出流）：cerr 不使用缓冲区，直接向显示器输出信，不能重定向。
++ clog（缓冲错误输出流）：先被存储到缓冲区中，缓冲区满或者刷新时才输出到屏幕。
+
+cout 可以使用重定向函数 freopen 进行重定向输出到文件中保存。
+
+```cpp
+/**
+* 将 stream 按 mode 指定的模式重定向到路径 path 指向的文件
+* 如果重定向时发生错误，则关闭原来的 stream，函数返回 NULL
+* mode可以是“w”（写）或“T” （读）方式
+*/
+FILE * freopen(const char *path, const char *mode, FILE*stream);
+```
+
+标准输入输出重定向到文件
+
+```cpp
+#include <iostream>
+using namespace std;
+
+int main_out()
+{
+    int x, y;
+    y = 10;
+    // D:\soft\C\mingw64\bin
+    freopen("StandardOutput.txt", "w", stdout);
+    if (y == 0)
+    {
+        cerr << "Division by zero!";
+    }
+    else
+    {
+        // 上面通过freopen重定向了，cout会写入到StandardOutput.txt
+        cout << "------------------" << x / y << endl;
+    }
+    return 0;
+}
+
+int main_in()
+{
+    int x, count, sum = 0;
+    freopen("StandardOutput.dat", "r", stdin);
+    for (count = 0; count < 10; count++)
+    {
+        // 输入流改为从文件StandardOutput.dat读取
+        cin >> x;
+        // 是否读取到文件的最后
+        // cin.eof();
+        sum += x;
+    }
+    cout << "前10个整数的平均值=" << 1.0 * sum / 10 << endl;
+    return 0;
+}
+```
+
+### 控制 IO 格式
+```cpp
+#include <iostream>
+#include <iomanip>
+using namespace std;
+
+int main_out()
+{
+    int x, y;
+    y = 10;
+    // D:\soft\C\mingw64\bin
+    freopen("StandardOutput.txt", "w", stdout);
+    if (y == 0)
+    {
+        cerr << "Division by zero!";
+    }
+    else
+    {
+        // 上面通过freopen重定向了，cout会写入到StandardOutput.txt
+        cout << "------------------" << x / y << endl;
+    }
+    return 0;
+}
+
+int main_in()
+{
+    int x, count, sum = 0;
+    freopen("StandardOutput.dat", "r", stdin);
+    for (count = 0; count < 10; count++)
+    {
+        // 输入流改为从文件StandardOutput.dat读取
+        cin >> x;
+        // 是否读取到文件的最后
+        // cin.eof();
+        sum += x;
+    }
+    cout << "前10个整数的平均值=" << 1.0 * sum / 10 << endl;
+    return 0;
+}
+
+int main_int()
+{
+    int n = 65535, m = 20;
+    // 1)分别输出一个整数的十进制、十六进制和八进制表示
+    cout << "1)" << n << "=" << hex << n << "=" << oct << n << endl;
+
+    // 2)使用setbase分别输出一个整数的十进制、十六进制和八进制表示
+    cout << "2)" << setbase(10) << m << "=" << setbase(16) << m << "=" << setbase(8) << m << endl;
+
+    cout << "3)" << showbase; // 输出表示数值进制的前缀
+    cout << setbase(10) << m << "=" << setbase(16) << m << "=" << setbase(8) << m << endl;
+    return 0;
+}
+
+int main_float()
+{
+    double x = 1234567.89, y = 1.23456789;
+    cout << "无格式控制：\t\t1)x=(" << x << "), y=(" << y << ")\n";
+
+    cout << "保留5位有效数字：\t\t2)x=(" << setprecision(5) << x << "), y=(" << y << ")\n";
+
+    cout << "保留小数点后5位：\t\t3)x=(" << fixed << setprecision(5) << x << "), y=(" << y << ")\n";
+
+    cout << "科学计数法且保留小数点后5位：4)x=(" << x << "), y=(" << y << "\n";
+
+    // 显示正负号、普通小数、宽度12、不够补默认右对齐，左边补 *
+    cout << "5)" << showpos << fixed << setw(12) << setfill('*') << y << endl;
+
+    // 非负数不显示正号，宽度为12，左对齐，右边补*（如果前面没有setfill(*)，则补空格符）
+    cout << "6)" << noshowpos << setw(12) << left << y << endl;
+
+    // 宽度12，宽度不足时右对齐，左边补字符
+    cout << "7)" << setw(12) << right << y << endl;
+
+    // 宽度不足时，负号和数值分列左右，中间用填充字符填充
+    cout << "8)" << setw(12) << internal << -y << endl;
+
+    return 0;
+}
+
+// setiosflags() 设置标志字进行格式控制
+int main_setiosflags()
+{
+    /**
+     * ios::skipws      跳过输入中的空白
+     * ios::left        按输出左对齐，用填充字符填充右边
+     * ios::right       按输出右对齐，用填充字符填充左边
+     * ios::internal    在符号位或者基数指示符后填充
+     * ios::dec *       十进制表示
+     * ios::oct         八进制表示
+     * ios::hex         十六进制表示
+     * ios::showbase    显示基数指示符
+     * ios::showpoint   显示小数点
+     * ios::uppercase   使用大写字母表示十六进制数
+     * ios::showpos     显示正负号
+     * ios:scientific   科学计数法
+     * ios::fixed       定点表示浮点数
+     * ios::unitbuf     输出时刷新缓冲区
+     */
+    double x = 12.34;
+    cout << "1)" << setiosflags(ios::scientific | ios::showpos) << x << endl;
+    cout << "2)" << setiosflags(ios::fixed) << x << endl;
+    cout << "3)" << resetiosflags(ios::fixed) << setiosflags(ios::scientific | ios::showpos)
+         << x << endl;
+    cout << "4)" << resetiosflags(ios::showpos) << x << endl;
+    return 0;
+}
+```
+
+### 调用 cout 成员函数
+```cpp
+#include <iostream>
+using namespace std;
+
+/**
+ * precision()      控制保留有效数字
+ * width()          控制输出宽度
+ * fill()           设置填充字符
+ * setf()           使用参数IFlags置位指定的标志位，返回值为置位前的标志字
+ * unsetf()         清除参数IFlags指定的标志位，返回清除前的标志字
+ */
+int main()
+{
+    double values[] = {1.23, 20.3456, 300.4567, 4000.56789, 50000.1234567};
+    cout.fill('*'); // 设置填充字符为星号*
+    for (int i = 0; i < sizeof(values) / sizeof(double); i++)
+    {
+        cout << "values[" << i << "]=(";
+        cout.width(10); // 设置输出宽度
+        cout << values[i] << ")" << endl;
+    }
+
+    cout.fill(' '); // 设置填充字符为空格
+    cout << endl;
+    for (int i = 0; i < sizeof(values) / sizeof(double); i++)
+    {
+        cout << "values[" << i << "]=(";
+        cout.width(10);        // 设置填充字符为空格
+        cout.precision(i + 3); // 设置保留有效数字
+        cout << values[i] << ")" << endl;
+    }
+}
+```
+
+### 调用 cin 成员函数
+```cpp
+#include <iostream>
+using namespace std;
+int main_get()
+{
+    int n = 0;
+    char ch;
+    while ((ch = cin.get()) != EOF)
+    {
+        // 当文件没有结束时继续进行循环
+        // cin.get()功能类似C语言的getchar()，从键盘读入1个字符
+        cout.put(ch);
+        n++;
+    }
+
+    cout << "输入字符共计：" << n << endl;
+    return 0;
+}
+
+int main()
+{
+    char buf[10];
+    int i = 0;
+    // 若输入流的一行超过9个字符，则会出错，循环结束
+    while (cin.getline(buf, 10))
+    {
+        cout << ++i << ":" << buf << endl;
+    }
+    cout << "last:" << buf << endl;
+    return 0;
+}
+
+/**
+ * cin.eof()                        用于判断输入流是否已经结束。返回值为 true (1) 表示输入结束
+ * cin.ignore(int n, char ch)       是跳过输入流中的 n 个字符，或跳过 ch 及其之前的所有字符
+ * cin.peek()                       返回输入流中的当前字符，但是并不将该字符从输入流中取走
+ */
+```
+
+## 文件操作
+### 文件
+根据文件数据的编码方式不同分为文本文件和二进制文件
+
++ 文本文件：文件中的每个字节都是一个 ASCII 码
++ 二进制文件：C++ 中将非文本文件统称为二进制文件
+
+根据存取方式不同分为顺序存取文件和随机存取文件
+
++ 顺序存取文件：就是按照文件中数据存储次序进行顺序操作
++ 随机访问文件：是根据应用的需要，通过命令移动位置指针直接定位到文件内需要的位置并进行数据操作
+
+### 文件打开模式标记
+| 标记 | 说明 |
+| --- | --- |
+| ios::in | 以读的方式打开，不存在则报错 |
+| ios::out | 以写的方式打开，不存在会新建 |
+| ios::app | 追加，不存在会新建 |
+| ios::ate | 打开一个已有的文件，并且将指针指向文件末尾，不存在则报错 |
+| ios::trunc | 删除文件现有内容 |
+| ios::binary | 以二进制的方式打开文件 |
+| ios::in|ios::out | 打开已存在文件，即可读取又可写入，文件打开时原有内容不变，不存在则报错 |
+| ios::in|ios::out|ios::trunc | 同上，打开文件会清除内容 |
+
+
+### 读取&写入文本文件
+```cpp
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+int main_write()
+{
+    char id[11], name[21];
+    int score;
+    ofstream outFile;
+    outFile.open("scoreByCpp.txt", ios::out);
+    if (!outFile)
+    {
+        cout << "创建文件失败" << endl;
+        return 0;
+    }
+
+    cout << "请输入学号姓名成绩" << endl;
+
+    while (cin >> id >> name >> score)
+        outFile << id << " " << name << " " << score << endl;
+
+    outFile.close();
+
+    return 0;
+}
+
+int main_read()
+{
+
+    char id[11], name[21];
+    int score;
+
+    ifstream inFile;
+
+    inFile.open("scoreByCpp.txt", ios::in);
+
+    if (!inFile)
+    {
+        cout << "打开文件失败" << endl;
+        return 0;
+    }
+
+    cout << "学号\t\t姓名\t\t成绩\n";
+
+    while (inFile >> id >> name >> score)
+        cout << left << setw(15) << id << " " << setw(15) << name << " " << setw(3) << right << score << endl;
+
+    inFile.close();
+    return 0;
+}
+```
+
+### 读取&写入二进制文件
+```cpp
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+
+class Student
+{
+public:
+    char id[11];
+    char name[21];
+    int score;
+};
+
+int main_write()
+{
+    Student stu;
+    // 如果要追加的话，把ios::out 改成 ios::app
+    ofstream outFile("studentsByCpp.dat", ios::out | ios::binary);
+    if (!outFile)
+    {
+        cout << "创建文件失败" << endl;
+        return 0;
+    }
+
+    cout << "请输入:学号 姓名 成绩";
+    while (cin >> stu.id >> stu.name >> stu.score)
+        // ostream & write(char * buffer, int nCount)
+        // 将内存中 buffer 所指向的 nCount 个字节的内容写入文件，返回值是对函数所作用的对象的引用。
+        outFile.write((char *)&stu, sizeof(stu));
+
+    outFile.close();
+    return 0;
+}
+
+int main()
+{
+    Student stu;
+    int count = 0, nbyte = 0;
+    ifstream inFile("studentsByCpp.dat", ios::in | ios::binary);
+    if (!inFile)
+    {
+        cout << "打开文件失败" << endl;
+        return 0;
+    }
+
+    cout << "学号 姓名 成绩" << endl;
+    // istream &read(char * buffer, int nCount)
+    // 从文件中读取 nCount 个字节的内容，存放到 buffer 所指向的内存缓冲区中，返回值是对函数所作用的对象的引用
+    while (inFile.read((char *)&stu, sizeof(stu)))
+    {
+        cout << left << setw(10) << stu.id << " " << setw(20) << stu.name
+             << " " << setw(3) << right << stu.score << endl;
+        count++;
+        // int gcount();
+        // 返回值就是最近一次read()函数执行时成功读取的字节数
+        nbyte += inFile.gcount();
+    }
+
+    cout << "共有记录数:" << count << "字节数:" << nbyte << endl;
+    inFile.close();
+    return 0;
+}
+```
+
+### 文本文件&二进制文件
+文本文件
+
++ 优点：是具有较高的兼容性
++ 缺点
+    - 是存储一批纯数值信息时，要在数据之间人为地添加分隔符
+    - 在输入/输出过程中，系统要对内外存的数据格式进行相应的转换
+    - 不便于对数据进行随机访问
+
+二进制文件
+
++ 优点
+    - 相同数据类型的数据所占空间的大小均是相同的，不必在数据之间人为地添加分隔符
+    - 在输入/输出过程中，系统不需要对数据进行任何转换
+    - 便于对数据实行随机访问
++ 缺点：数据兼容性差
+
+> 通常纯文本信息（如字符串）以文本文件形式存储而将数值信息以二进制文件形式存储。文本文件和二进制文件在处理上和使用上有微小差别。
+>
+
+### 随机文件访问
++ 顺序文件：只能进行顺序存取操作的文件。如:键盘显示器和保存在磁带上的文件
++ 随机文件：可以在文件的任意位置进行存取操作文件如：磁盘文件
++ 顺序访问：严格按照数据保存的次序从头到尾访问文件
++ 随机访问：根据需要在文件的不同位置进行访问顺序文件只能进行顺序访问；随机文件既可以进行顺序访问，也可以进行随机访问
++ 文件位置指针：文件打开后，系统自动生成一个流指针，这个指针决定着写或读开始的位置
+
+#### API
+移动读指针函数
+
++ `istream & seekg(long pos);`将读指针设置为 pos，即将读指针移动到文件的 pos 字节处
++ `istream & seekg(long offset, ios::seek_dir dir);`将读指针按照 seek_dir 的指示（方向）移动 offset 个字节。其中 seek dir 是在类 ios 中定义的一个枚举类型
+    - ios::beg：表示流的开始位置
+    - ios::cur：表示流的当前位置
+    - ios::end：表示流的结束位置
+
+读指针当前位置值的函数
+
++ `long tellg();`函数返回值值为流中读指针的当前位置
+
+移动写指针函数
+
++ `ostream & seekp (long pos);`写指针设置为pos即将写指针移动到文件的pos字节处
++ `ostream & seekp (long offset, ios::seek_dir dir);`写指针按 seek_dir 指示的方向移动offset个字节
+
+返回写指针当前位置的函数
+
++ `long tellp();`函数返回值值为流中写指针的当前位置
+
+```cpp
+#include <iostream>
+#include <fstream>
+#include <iomanip>
+using namespace std;
+class CStudent
+{
+public:
+	char id[11];
+	char name[21];
+	int score;
+};
+
+int main()
+{
+	CStudent stu;
+	int count = 0, nbyte = 0;
+	ifstream inFile("studentsByCpp.dat", ios::in | ios::binary);
+	if (!inFile)
+	{
+		cout << "创建文件失败" << endl;
+		return 0;
+	}
+	else
+	{
+		cout << "打开文件时位置指针:" << inFile.tellg() << endl;
+		// id 11 + name 21 + int score 4 = 36
+		cout << "每个记录大小:" << sizeof(CStudent) << endl;
+	}
+
+	cout << "学生学号姓名\t\t\t成绩\t流指针\n";
+	while (inFile.read((char *)&stu, sizeof(stu)))
+	{
+		cout << left << setw(10) << stu.id << " " << setw(20) << stu.name
+			 << " " << setw(3) << right << stu.score << endl;
+		count++;
+		nbyte += inFile.gcount(); // 得到本次read读取的字节数量
+	}
+
+	cout << "读取文件结束时位置指针:" << inFile.tellg() << endl;
+	cout << "共有记录数:" << count << "字节数:" << nbyte << endl;
+	return 0;
+}
+```
+
+## 模版
+### 函数模版
+在程序设计时不给出相应数据的实际类型而是将类型参数化，在实际编译时，才由编译器利用实际的类型给予实例化，使它满足需要，就像按照模板来制造新的函数一样
 
 
 
+函数模板 & 函数的区别
+
++ 函数模板本身在编译时不会生成任何目标代码，只有当通过模板生成具体的函数实例时才会生成目标代码
++ 被多个源文件引用的函数模板，应当连同函数体一同放在头文件中，而不能像普通函数那样只将声明放在头文件
++ 函数指针也只能指向模板的实例，而不能指向模板本身
+
+```cpp
+#include <iostream>
+using namespace std;
+
+// 函数模版
+template <typename T>
+T abs(T x)
+{
+    return x < 0 ? -x : x;
+}
+
+int main()
+{
+    cout << abs(-10) << endl;
+    cout << abs(10.5) << endl;
+    return 0;
+}
+```
+
+定义对象交换的函数模板
+
+```cpp
+#include <iostream>
+using namespace std;
+
+template <class T>
+void exchange(T &x, T &y)
+{
+    T temp = x;
+    x = y;
+    y = temp;
+}
+
+class MyDate
+{
+public:
+    MyDate();
+    MyDate(int, int, int);
+    void print();
+
+private:
+    int day, month, year;
+};
+
+MyDate::MyDate()
+{
+    year = 1970;
+    month = 1;
+    day = 1;
+}
+
+MyDate::MyDate(int d, int m, int y)
+{
+    year = y;
+    month = m;
+    day = d;
+}
+
+void MyDate::print()
+{
+    cout << day << "/" << month << "/" << year << endl;
+}
+
+int main()
+{
+    int m = 2, n = 4;
+    exchange(m, n);
+    cout << m << " " << n << endl;
+
+    MyDate d1, d2(2, 3, 2001);
+    d1.print();
+    d2.print();
+    exchange(d1, d2);
+    cout << "------------exchange---------------" << endl;
+    d1.print();
+    d2.print();
+    return 0;
+}
+```
+
+重载的函数与函数模板是允许重载的。在函数和函数模板名字相同的情况下，函数调用语句遵循以下先后顺序：
+
++ 先找参数完全匹配的普通函数（不是由模板实例化得到的模函）
++ 再找参数完全匹配的模板函数
++ 然后找实参经过自动类型转换后能够匹配的普通函数
++ 如果上面的都找不到，则报错
+
+### 类模版
+类是对一组对象的公共性质的抽象，而类模板则是对不同类的公共性质的抽象。（泛型类）
+
+```cpp
+#include <iostream>
+using namespace std;
+
+template <class T1, class T2>
+class Pair
+{
+public:
+    T1 first;
+    T2 second;
+    Pair(T1 k, T2 v) : first(k), second(v) {}
+    bool operator<(const Pair<T1, T2> &p) const;
+};
+
+template <class T1, class T2>
+bool Pair<T1, T2>::operator<(const Pair<T1, T2> &p) const
+{
+    // 仅比较第一个成员变量的大小
+    return first < p.first;
+}
+
+int main()
+{
+
+    Pair<string, int> stu1("zhangsan", 18);
+    Pair<string, int> stu2("lisi", 19);
+
+    Pair<int, int> coordinate(10, 20);
+    Pair<string, string> dic("word", "单词");
+
+    cout << "stu1\t" << stu1.first << "\t" << stu1.second << endl;
+    cout << "stu2\t" << stu2.first << "\t" << stu2.second << endl;
+    cout << "coord\t" << coordinate.first << "\t" << coordinate.second << endl;
+    cout << "dic\t" << dic.first << "\t" << dic.second << endl;
+    cout << "-------------------------------------" << endl;
+
+    bool a = stu1 < stu2;
+    cout << a << endl;
+
+    return 0;
+}
+```
+
+普通参数的类模板
+
+```cpp
+#include <iostream>
+using namespace std;
+
+template <int i>
+class TestClass
+{
+public:
+    int buffer[i];
+    int getData(int j);
+};
+
+template <int i>
+int TestClass<i>::getData(int j)
+{
+    return *(buffer + j);
+}
+
+int main()
+{
+    TestClass<6> ClassInstF;
+    int i;
+    double fArr[6] = {12.1, 23.2, 34.3, 45.4, 56.5, 67.6};
+    for (i = 0; i < 6; i++)
+        ClassInstF.buffer[i] = fArr[i] - 10;
+    for (i = 0; i < 6; i++)
+    {
+        double res = ClassInstF.getData(i);
+        cout << res << " ";
+    }
+    cout << endl;
+}
+```
+
+普通类继承类模版
+
+```cpp
+#include <iostream>
+using namespace std;
+template <class T> // 类模板
+class TBase
+{
+    T data;
+
+public:
+    void print()
+    {
+        cout << data << endl;
+    }
+};
+
+class Derived : public TBase<int> // 普通类Derived继承了模板类TBase<int>
+{
+};
+
+int main()
+{
+    Derived d; // 生成派生类的对象，调用默认构造函数
+    d.print(); // 调用成员函数，输出0
+    return 0;
+}
+```
 
