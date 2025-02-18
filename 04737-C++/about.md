@@ -8,6 +8,10 @@
 cpp 文件说明
 |文件名|说明|
 |--|--|
+|file--fileCopy.cpp|复制文件内容|
+|file--open.cpp|打开文件|
+|file--readAndWrite.cpp|写入&读取文本文件|
+|file--readAndWriteBuffer.cpp|写入&读取二进制文件|
 |AddAndReduce.cpp|自增、自减运算符重载|
 |base.cpp|继承&派生 基类|
 |cin.cpp|输入|
