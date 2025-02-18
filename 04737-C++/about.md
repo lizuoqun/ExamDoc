@@ -13,6 +13,9 @@ cpp 文件说明
 |file--randomFile.cpp|随机访问文件，移动指针|
 |file--readAndWrite.cpp|写入&读取文本文件|
 |file--readAndWriteBuffer.cpp|写入&读取二进制文件|
+|template--class.cpp|类模板|
+|template--classInt.cpp|普通参数类模板|
+|template--classExtends.cpp|普通类继承类模板|
 |template--fn.cpp|函数模版|
 |template--fnObj.cpp|函数模版-对象复制|
 |AddAndReduce.cpp|自增、自减运算符重载|
