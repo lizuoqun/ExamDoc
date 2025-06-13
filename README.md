@@ -1,3 +1,5 @@
-## description
+## About me
 
-个人自考、软考等笔记记录、大纲、思维导图等文档类仓库
+[项目迁移](https://gitee.com/modify_lzq/web-vite-vue3)
+
+[在线预览](https://lizuoqun.github.io/My-Project/exam/00023.html)
